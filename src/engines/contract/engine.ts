@@ -1,20 +1,20 @@
-import type { Body, BodyState } from './body.ts';
-import type { JulianDayTT, TimeRange } from './julian-day.ts';
+import type { Body, BodyState } from './body.ts'
+import type { JulianDayTT, TimeRange } from './julian-day.ts'
 
 /** What an adapter declares about itself. The API copies it into every result's `meta`. */
 export interface EngineInfo {
   /** Stable adapter id, e.g. `'caelus'` or `'naelos'`. */
-  id: string;
+  id: string
   /** Name of the underlying ephemeris library. */
-  name: string;
+  name: string
   /** Version of the underlying ephemeris library. */
-  version: string;
+  version: string
   /** SPDX license identifier of the underlying ephemeris library. */
-  license: string;
+  license: string
   /** Source of the positions, e.g. `'JPL DE440'`. */
-  source: string;
+  source: string
   /** Range in which the engine returns validated results. */
-  coverage: TimeRange;
+  coverage: TimeRange
 }
 
 /**
@@ -32,8 +32,8 @@ export interface EngineInfo {
  * - Engines compute no houses, angles, sidereal time, obliquity or nutation.
  */
 export interface AstronomyEngine {
-  readonly info: EngineInfo;
-  readonly bodies: ReadonlySet<Body>;
+  readonly info: EngineInfo
+  readonly bodies: ReadonlySet<Body>
 
   /**
    * Ensures `state()` can answer for every instant in the range: one-time setup on the
@@ -42,7 +42,7 @@ export interface AstronomyEngine {
    *
    * @throws {OutOfRangeError} If the range is not within the engine's coverage.
    */
-  load(range: TimeRange): Promise<void>;
+  load(range: TimeRange): Promise<void>
 
   /**
    * State of a body at an instant. Synchronous and cheap: searches call it tens of
@@ -52,5 +52,5 @@ export interface AstronomyEngine {
    * @throws {OutOfRangeError} If the instant is outside the engine's coverage.
    * @throws {EngineNotReadyError} If the data for the instant has not been loaded.
    */
-  state(body: Body, julianDay: JulianDayTT): BodyState;
+  state(body: Body, julianDay: JulianDayTT): BodyState
 }

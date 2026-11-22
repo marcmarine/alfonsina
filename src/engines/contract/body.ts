@@ -14,10 +14,10 @@ export const BODIES = [
   'uranus',
   'neptune',
   'pluto',
-] as const;
+] as const
 
 /** A planet or point an engine computes. */
-export type Body = (typeof BODIES)[number];
+export type Body = (typeof BODIES)[number]
 
 /**
  * Apparent geocentric state of a body, ecliptic and true equinox of date.
@@ -26,17 +26,17 @@ export type Body = (typeof BODIES)[number];
  * field: the caller already knows the instant it asked for.
  */
 export interface BodyState {
-  body: Body;
+  body: Body
   /** Ecliptic longitude in degrees, [0, 360). */
-  longitude: number;
+  longitude: number
   /** Ecliptic latitude in degrees. */
-  latitude: number;
+  latitude: number
   /** Distance from the Earth in AU. */
-  distance: number;
+  distance: number
   /** Degrees per day. Always present; negative while retrograde. */
-  longitudeSpeed: number;
+  longitudeSpeed: number
   /** Degrees per day. */
-  latitudeSpeed: number;
+  latitudeSpeed: number
   /** AU per day. */
-  distanceSpeed: number;
+  distanceSpeed: number
 }

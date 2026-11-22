@@ -1,0 +1,17 @@
+{
+  "name": "alfonsina",
+  "version": "0.0.0",
+  "description": "Astrology calculation library for JavaScript and TypeScript, built on swappable ephemeris engines.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Marc Mariné",
+  "keywords": [
+    "astrology",
+    "astronomy",
+    "ephemeris",
+    "horoscope",
+    "natal-chart",
+    "houses",
+    "aspects"
+  ]
+}

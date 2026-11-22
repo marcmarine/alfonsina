@@ -1,4 +1,4 @@
-// Generated from USNO data on 2026-11-22. Do not edit by hand.
+// Generated from USNO data on 2026-11-22 by `bun run update-delta-t`. Do not edit by hand.
 //
 // Measured ΔT (TT − UT1) in seconds on January 1 of each year from 1657 to 2026:
 // - 1657–1973: https://maia.usno.navy.mil/ser7/historic_deltat.data
@@ -37,5 +37,5 @@ export const MEASURED_DELTA_T: readonly number[] = [
   69.2945, 69.2039, 69.1752, 69.1377, 69.1099,
 ]
 
-/** Latest measured value: Julian Day UT of 2026-10-01T00:00 and ΔT in seconds. */
-export const LATEST_MEASURED_DELTA_T = { julianDay: 2461314.5, seconds: 69.2065 } as const
+/** Latest measured value: its date (0h UT) and ΔT in seconds. */
+export const LATEST_MEASURED_DELTA_T = { date: '2026-10-01', seconds: 69.2065 } as const

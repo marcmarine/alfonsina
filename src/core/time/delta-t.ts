@@ -1,5 +1,5 @@
 import type { JulianDayUT } from '../../engines/contract/index.ts'
-import { decimalYearFromJulianDay as decimalYear } from './calendar.ts'
+import { decimalYearFromJulianDay as decimalYear, julianDayFromUTC } from './calendar.ts'
 import { LATEST_MEASURED_DELTA_T, MEASURED_DELTA_T, MEASURED_FIRST_YEAR } from './delta-t-data.ts'
 import type { DateRange } from './types.ts'
 
@@ -13,14 +13,14 @@ import type { DateRange } from './types.ts'
  */
 export const DELTA_T_MODEL: { readonly name: string; readonly measured: DateRange } = {
   name: 'USNO measured values, Espenak–Meeus 2006 outside them',
-  measured: { start: '1657-01-01', end: '2026-10-01' },
+  measured: { start: `${MEASURED_FIRST_YEAR}-01-01`, end: LATEST_MEASURED_DELTA_T.date },
 }
 
 /** Years over which the shift between the polynomials and the measured values fades out. */
 const BLEND_YEARS = 100
 
 const FIRST_YEAR = MEASURED_FIRST_YEAR
-const LAST_YEAR = decimalYear(LATEST_MEASURED_DELTA_T.julianDay)
+const LAST_YEAR = decimalYear(julianDayFromUTC(LATEST_MEASURED_DELTA_T.date))
 
 /**
  * ΔT in seconds from the Espenak–Meeus (2006) polynomials, NASA Five Millennium Canon of

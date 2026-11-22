@@ -7,6 +7,7 @@
       "devDependencies": {
         "@biomejs/biome": "2.6.8",
         "@types/node": "^26.6.6",
+        "caelus": "0.25.0",
         "typescript": "^7.0.2",
         "vitest": "^5.1.1",
       },
@@ -140,6 +141,8 @@
     "@vitest/spy": ["@vitest/spy@5.1.1", "", {}, "sha512-6K8C6alQG1/Yc8/ZI22iJS7JEsxPdVzqtqDq+/xM4Z0mGVykemMVjLhqMy/q6/IHYG3kKD8hKSwRen/ZdyI9vQ=="],
 
     "assertion-error": ["assertion-error@2.0.1", "", {}, "sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA=="],
+
+    "caelus": ["caelus@0.25.0", "", {}, "sha512-3ri2mM8OqkfCPgrVSQ7ewyq62CHoIFp0s15fL/M5FA7n3FrbEFwLqUoeIZRWn83X/JUJBh+X+2eZTypJ+ZQA7w=="],
 
     "chai": ["chai@6.3.0", "", {}, "sha512-XWAtwJ6OHO+tj0EKCs0Y2UamnyOxseZWltU4x2U2wh8g4AigdjwvtUjvLP2tqkA/avxHEtzxNaqGq/YGNwckKg=="],
 

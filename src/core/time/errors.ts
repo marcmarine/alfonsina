@@ -16,3 +16,22 @@ export class InvalidDateError extends Error {
     this.suggestion = suggestion
   }
 }
+
+/**
+ * A time zone or UTC offset that cannot be used: an unknown IANA name, a malformed
+ * `utcOffset`, or neither of them given.
+ */
+export class InvalidTimeZoneError extends Error {
+  override readonly name = 'InvalidTimeZoneError'
+  readonly code = 'INVALID_TIME_ZONE'
+  /** The rejected input; empty when neither a time zone nor an offset was given. */
+  readonly input: string
+  /** How to fix the input. */
+  readonly suggestion: string
+
+  constructor(input: string, reason: string, suggestion: string) {
+    super(input === '' ? `${reason}.` : `Invalid time zone '${input}': ${reason}.`)
+    this.input = input
+    this.suggestion = suggestion
+  }
+}

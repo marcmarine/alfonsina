@@ -37,6 +37,7 @@
     "@biomejs/biome": "2.6.8",
     "@types/node": "^26.6.6",
     "caelus": "0.25.0",
+    "naelos-ephemeris": "0.1.2",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }

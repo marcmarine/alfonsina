@@ -73,11 +73,15 @@ export class EngineNotReadyError extends EngineError {
   /** The instant that was asked for. */
   readonly requested: JulianDayTT
 
-  constructor(engineId: string, requested: JulianDayTT) {
+  /**
+   * @param suggestion How to fix the call, when the caller knows better than the default
+   *   (an Alfonsina instance names its own `load()`).
+   */
+  constructor(engineId: string, requested: JulianDayTT, suggestion?: string) {
     super(
       engineId,
       `Engine '${engineId}' has no data loaded for JD ${requested} TT.`,
-      'Await load() with a range that includes this instant before calling state().',
+      suggestion ?? 'Await load() with a range that includes this instant before calling state().',
     )
     this.requested = requested
   }

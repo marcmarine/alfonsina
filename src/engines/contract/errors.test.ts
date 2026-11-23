@@ -66,6 +66,11 @@ describe('EngineNotReadyError', () => {
     expect(error.message).toBe("Engine 'fake' has no data loaded for JD 2451545 TT.")
     expect(error.suggestion).toContain('load()')
   })
+
+  it('takes a suggestion from a caller that knows a better fix', () => {
+    const error = new EngineNotReadyError('fake', 2451545 as JulianDayTT, 'Load it first.')
+    expect(error.suggestion).toBe('Load it first.')
+  })
 })
 
 describe('EngineError', () => {

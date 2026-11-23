@@ -1,5 +1,6 @@
 // Public entry for `alfonsina`. The high-level API and the astrology helpers are
 // exported from here as they land.
+export { Alfonsina, type AlfonsinaOptions } from './api/index.ts'
 export type { Aspect, AspectOptions, AspectPoint } from './astrology/aspects/index.ts'
 export { findAspects } from './astrology/aspects/index.ts'
 export type { ChartPoint } from './astrology/points.ts'

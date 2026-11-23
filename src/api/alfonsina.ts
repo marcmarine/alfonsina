@@ -7,6 +7,7 @@ import {
   type JulianDayTT,
   type TimeRange,
 } from '../engines/contract/index.ts'
+import { type Chart, type ChartInput, chart } from './chart.ts'
 
 /** Range loaded when `create` gets none, cut to the engine's coverage. */
 export const DEFAULT_RANGE: DateRange = { start: '1900-01-01', end: '2100-01-01' }
@@ -63,6 +64,11 @@ export interface Alfonsina {
    * throws `OutOfRangeError` outside the engine's coverage.
    */
   load(range: DateRange): Promise<void>
+  /**
+   * The chart for a local date, time and place: bodies, angles, houses and aspects, with
+   * `meta` and `warnings`. Synchronous; the instant must be within the loaded dates.
+   */
+  chart(input: ChartInput): Chart
 }
 
 export const Alfonsina = {
@@ -96,19 +102,18 @@ export const Alfonsina = {
 
     await loadRange(options.range ? toTimeRange(options.range) : defaultRange(engine.info.coverage))
 
+    function state(body: Body, julianDay: JulianDayTT): BodyState {
+      // Unsupported bodies and instants outside the coverage get the engine's own error.
+      if (engine.bodies.has(body) && contains(engine.info.coverage, julianDay)) {
+        assertLoaded(julianDay)
+      }
+      return engine.state(body, julianDay)
+    }
+
     return {
-      engine: {
-        info: engine.info,
-        bodies: engine.bodies,
-        state(body: Body, julianDay: JulianDayTT): BodyState {
-          // Unsupported bodies and instants outside the coverage get the engine's own error.
-          if (engine.bodies.has(body) && contains(engine.info.coverage, julianDay)) {
-            assertLoaded(julianDay)
-          }
-          return engine.state(body, julianDay)
-        },
-      },
+      engine: { info: engine.info, bodies: engine.bodies, state },
       load: (range) => loadRange(toTimeRange(range)),
+      chart: (input) => chart(state, engine.info, input),
     }
   },
 }

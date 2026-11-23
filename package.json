@@ -18,6 +18,18 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./engines/caelus": {
+      "types": "./dist/engines/caelus/index.d.ts",
+      "import": "./dist/engines/caelus/index.js"
+    },
+    "./engines/naelos": {
+      "types": "./dist/engines/naelos/index.d.ts",
+      "import": "./dist/engines/naelos/index.js"
     }
   },
   "files": [
@@ -34,6 +46,18 @@
     "format": "biome check --write .",
     "update-delta-t": "bun scripts/update-delta-t.ts && biome format --write src/core/time/delta-t-data.ts",
     "fetch-horizons": "bun scripts/fetch-horizons.ts && biome format --write tests/reference-data/horizons.json"
+  },
+  "peerDependencies": {
+    "caelus": "^0.25.0",
+    "naelos-ephemeris": "^0.1.2"
+  },
+  "peerDependenciesMeta": {
+    "caelus": {
+      "optional": true
+    },
+    "naelos-ephemeris": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",

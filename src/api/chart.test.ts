@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { createFakeEngine } from '../../tests/engine-conformance/fake-engine.ts'
+import { NoSunriseError } from '../astrology/chart/index.ts'
 import { deltaT } from '../core/time/index.ts'
 import { caelusEngine } from '../engines/caelus/index.ts'
 import { EngineNotReadyError } from '../engines/contract/index.ts'
@@ -43,6 +44,7 @@ describe('alfonsina.chart', () => {
     const { meta, instant } = alfonsina.chart(MADRID)
     expect(meta).toEqual({
       engine: alfonsina.engine.info,
+      timeSource: 'given',
       deltaT: deltaT(instant.julianDayUT),
       positions: 'apparent',
       frame: 'ecliptic-of-date',
@@ -128,5 +130,50 @@ describe('alfonsina.chart', () => {
     expect(Math.abs(chart.points.moon.longitude - quick.points.moon.longitude) * 3600).toBeLessThan(
       10,
     )
+  })
+})
+
+describe('alfonsina.chart at sunrise', () => {
+  const SUNRISE: ChartInput = { ...MADRID, time: 'sunrise' }
+
+  it('casts the chart for the local sunrise, marked as computed', () => {
+    const chart = alfonsina.chart(SUNRISE)
+    expect(chart.instant.local).toBe('1990-05-15T07:03:41+02:00')
+    expect(chart.meta.timeSource).toBe('sunrise')
+    expect(chart.points.sun.sign).toBe(chart.points.ascendant.sign)
+    expect(chart.warnings.map((warning) => warning.code)).toEqual(['SUNRISE_CHART'])
+  })
+
+  it('is the same chart as asking for that time, apart from meta and warnings', () => {
+    const sunrise = alfonsina.chart(SUNRISE)
+    const given = alfonsina.chart({ ...MADRID, time: '07:03:41' })
+    expect(sunrise.instant).toEqual(given.instant)
+    expect(sunrise.points).toEqual(given.points)
+    expect(sunrise.houses).toEqual(given.houses)
+    expect(sunrise.aspects).toEqual(given.aspects)
+    expect(given.meta.timeSource).toBe('given')
+  })
+
+  it('keeps the house system asked for and its fallback', () => {
+    const chart = alfonsina.chart({
+      ...SUNRISE,
+      date: '1990-06-10',
+      location: { latitude: 66.8, longitude: 18.96, utcOffset: '+02:00' },
+    })
+    expect(chart.houses.system).toBe('whole-sign')
+    expect(chart.warnings.map((warning) => warning.code)).toEqual([
+      'SUNRISE_CHART',
+      'PLACIDUS_UNDEFINED',
+    ])
+  })
+
+  it('throws NoSunriseError when the Sun does not rise that day', () => {
+    expect(() =>
+      alfonsina.chart({
+        ...SUNRISE,
+        date: '1990-06-21',
+        location: { latitude: 78.22, longitude: 15.65, timezone: 'Arctic/Longyearbyen' },
+      }),
+    ).toThrow(NoSunriseError)
   })
 })

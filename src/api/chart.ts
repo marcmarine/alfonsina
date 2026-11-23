@@ -4,6 +4,7 @@ import {
   type ChartSettings,
   type Coordinates,
   calculateChart,
+  findSunrise,
   resolveSettings,
   type StateFunction,
   type Zodiac,
@@ -30,16 +31,24 @@ export interface ChartLocation extends Coordinates {
 export interface ChartInput {
   /** Local date, `YYYY-MM-DD`. */
   date: string
-  /** Local time, `HH:mm`, `HH:mm:ss` or `HH:mm:ss.fff`. */
+  /**
+   * Local time, `HH:mm`, `HH:mm:ss` or `HH:mm:ss.fff`; or `'sunrise'` when the birth time is
+   * unknown, for the chart at the instant the Sun crosses the ascendant that day.
+   */
   time: string
   location: ChartLocation
   settings?: ChartSettings
 }
 
+/** Where a chart's time comes from. */
+export type TimeSource = 'given' | 'sunrise'
+
 /** How a chart was computed, so it can be interpreted and reproduced. */
 export interface ChartMeta {
   /** The engine that gave the positions. */
   engine: EngineInfo
+  /** `'given'` for the time in the input, `'sunrise'` for a computed sunrise time. */
+  timeSource: TimeSource
   /** ΔT = TT − UT at the instant, in seconds. */
   deltaT: number
   /** Apparent geocentric positions. */
@@ -82,12 +91,15 @@ export function chart(state: StateFunction, engine: EngineInfo, input: ChartInpu
   const coordinates = { latitude: location.latitude, longitude: location.longitude }
   // Bad coordinates or settings fail before the local time is read.
   const { zodiac, houseSystem } = resolveSettings(coordinates, settings)
-  const local = fromLocal({
-    date: input.date,
-    time: input.time,
+  const zone = {
     ...(location.timezone !== undefined && { timezone: location.timezone }),
     ...(location.utcOffset !== undefined && { utcOffset: location.utcOffset }),
-  })
+  }
+  const timeSource: TimeSource = input.time === 'sunrise' ? 'sunrise' : 'given'
+  const local =
+    timeSource === 'sunrise'
+      ? findSunrise(state, input.date, coordinates, zone)
+      : fromLocal({ date: input.date, time: input.time, ...zone })
   const { instant } = local
   const calculation = calculateChart(state, instant, coordinates, settings)
 
@@ -99,6 +111,7 @@ export function chart(state: StateFunction, engine: EngineInfo, input: ChartInpu
     aspects: calculation.aspects,
     meta: {
       engine: { ...engine, coverage: { ...engine.coverage } },
+      timeSource,
       deltaT: deltaT(instant.julianDayUT),
       positions: 'apparent',
       frame: 'ecliptic-of-date',

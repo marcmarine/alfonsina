@@ -3,7 +3,12 @@ import * as alfonsina from './index.ts'
 
 describe('alfonsina', () => {
   it('exposes the zodiac helpers', () => {
-    expect(Object.keys(alfonsina).sort()).toEqual(['Alfonsina', 'findAspects', 'zodiac'])
+    expect(Object.keys(alfonsina).sort()).toEqual([
+      'Alfonsina',
+      'NoSunriseError',
+      'findAspects',
+      'zodiac',
+    ])
     expect(Object.keys(alfonsina.zodiac).sort()).toEqual([
       'signLongitude',
       'signLongitudeParts',

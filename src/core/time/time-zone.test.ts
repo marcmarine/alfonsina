@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { InvalidDateError, InvalidTimeZoneError } from './errors.ts'
 import { fromUTC } from './scales.ts'
-import { fromLocal } from './time-zone.ts'
+import { fromLocal, toLocal } from './time-zone.ts'
 
 describe('fromLocal with a time zone', () => {
   it('reads an ordinary local time', () => {
@@ -219,4 +219,37 @@ describe('fromLocal errors', () => {
 it('returns plain data', () => {
   const result = fromLocal({ date: '2024-10-27', time: '02:30', timezone: 'Europe/Madrid' })
   expect(JSON.parse(JSON.stringify(result))).toEqual(result)
+})
+
+describe('toLocal', () => {
+  it('reverses fromLocal, with the offset in force at the instant', () => {
+    for (const [date, time] of [
+      ['1990-05-15', '14:30:00'],
+      ['1990-01-15', '09:05:30'],
+      ['1890-01-01', '12:00:00'],
+    ] as const) {
+      const { instant } = fromLocal({ date, time, timezone: 'Europe/Madrid' })
+      expect(toLocal(instant.julianDayUT, { timezone: 'Europe/Madrid' })).toEqual(instant)
+    }
+  })
+
+  it('takes the second reading of a repeated hour when the instant is in it', () => {
+    const first = fromLocal({ date: '2021-10-31', time: '02:30', timezone: 'Europe/Madrid' })
+    const hourLater = (first.instant.julianDayUT + 1 / 24) as typeof first.instant.julianDayUT
+    expect(toLocal(hourLater, { timezone: 'Europe/Madrid' }).local).toBe(
+      '2021-10-31T02:30:00+01:00',
+    )
+  })
+
+  it('uses a fixed UTC offset when given, over the time zone', () => {
+    const { instant } = fromLocal({ date: '1990-05-15', time: '14:30', utcOffset: '+05:30' })
+    expect(
+      toLocal(instant.julianDayUT, { utcOffset: '+05:30', timezone: 'Europe/Madrid' }).local,
+    ).toBe('1990-05-15T14:30:00+05:30')
+  })
+
+  it('needs a time zone or an offset', () => {
+    const { instant } = fromLocal({ date: '1990-05-15', time: '14:30', utcOffset: '+00:00' })
+    expect(() => toLocal(instant.julianDayUT, {})).toThrow(InvalidTimeZoneError)
+  })
 })

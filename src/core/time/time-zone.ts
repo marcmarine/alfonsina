@@ -107,6 +107,14 @@ function wallClockMilliseconds(date: string, time: string): number {
   return Math.round((julianDayFromUTC(text) - UNIX_EPOCH_JULIAN_DAY) * MILLISECONDS_PER_DAY)
 }
 
+function missingTimeZone(): InvalidTimeZoneError {
+  return new InvalidTimeZoneError(
+    '',
+    'Neither a time zone nor a UTC offset was given',
+    "Give timezone, e.g. 'Europe/Madrid', or utcOffset, e.g. '+02:00'.",
+  )
+}
+
 function toLocalInstant(epochMilliseconds: number, offsetSeconds: number): LocalInstant {
   const julianDayUT = (epochMilliseconds / MILLISECONDS_PER_DAY +
     UNIX_EPOCH_JULIAN_DAY) as JulianDayUT
@@ -134,13 +142,7 @@ export function fromLocal(input: LocalTime): LocalTimeResult {
     const offset = parseUtcOffset(input.utcOffset)
     return { instant: toLocalInstant(wallClock - offset * 1000, offset), warnings: [] }
   }
-  if (input.timezone === undefined) {
-    throw new InvalidTimeZoneError(
-      '',
-      'Neither a time zone nor a UTC offset was given',
-      "Give timezone, e.g. 'Europe/Madrid', or utcOffset, e.g. '+02:00'.",
-    )
-  }
+  if (input.timezone === undefined) throw missingTimeZone()
 
   const formatter = formatterFor(input.timezone)
   // Offsets a day before and after cover any single transition near the wall-clock time.
@@ -183,4 +185,20 @@ export function fromLocal(input: LocalTime): LocalTimeResult {
       },
     ],
   }
+}
+
+/** Where local times are read: an IANA time zone, or a fixed UTC offset that wins over it. */
+export type TimeZoneRule = Pick<LocalTime, 'timezone' | 'utcOffset'>
+
+/**
+ * The local instant for a UT instant: the reverse of `fromLocal`, with the offset in force
+ * at that instant. Rounded to the millisecond. Internal: not part of `alfonsina/core`.
+ *
+ * @throws {InvalidTimeZoneError} If the time zone or offset is unknown, malformed or missing.
+ */
+export function toLocal(julianDay: JulianDayUT, zone: TimeZoneRule): LocalInstant {
+  const epoch = Math.round((julianDay - UNIX_EPOCH_JULIAN_DAY) * MILLISECONDS_PER_DAY)
+  if (zone.utcOffset !== undefined) return toLocalInstant(epoch, parseUtcOffset(zone.utcOffset))
+  if (zone.timezone === undefined) throw missingTimeZone()
+  return toLocalInstant(epoch, offsetAt(formatterFor(zone.timezone), epoch))
 }

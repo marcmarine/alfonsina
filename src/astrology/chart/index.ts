@@ -11,3 +11,5 @@ export {
   type StateFunction,
   type Zodiac,
 } from './chart.ts'
+export { NoSunriseError } from './errors.ts'
+export { findSunrise, type Sunrise } from './sunrise.ts'

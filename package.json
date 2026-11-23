@@ -5,6 +5,14 @@
   "type": "module",
   "license": "MIT",
   "author": "Marc Mariné",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcmarine/alfonsina.git"
+  },
+  "homepage": "https://github.com/marcmarine/alfonsina#readme",
+  "bugs": {
+    "url": "https://github.com/marcmarine/alfonsina/issues"
+  },
   "keywords": [
     "astrology",
     "astronomy",

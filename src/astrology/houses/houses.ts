@@ -200,7 +200,7 @@ export function houses(
 
 /**
  * House (1–12) of an ecliptic longitude: the cusp it is at or past and before the next,
- * across the 360° → 0° wrap. Not public in 0.1.0 (D-68).
+ * across the 360° → 0° wrap. Not public in 0.1.0.
  */
 export function houseOf(longitude: number, cusps: readonly number[]): number {
   const point = normalize(longitude)

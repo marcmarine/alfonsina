@@ -35,7 +35,7 @@ export interface Aspect {
   applying: boolean
 }
 
-/** Default orbs in degrees (D-86). */
+/** Default orbs in degrees, the same for every point. */
 export const DEFAULT_ORBS: Readonly<Record<AspectName, number>> = {
   conjunction: 8,
   sextile: 5,

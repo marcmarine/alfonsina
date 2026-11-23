@@ -28,10 +28,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
+    "bench": "vitest bench --run --reporter=verbose",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "update-delta-t": "bun scripts/update-delta-t.ts && biome format --write src/core/time/delta-t-data.ts"
+    "update-delta-t": "bun scripts/update-delta-t.ts && biome format --write src/core/time/delta-t-data.ts",
+    "fetch-horizons": "bun scripts/fetch-horizons.ts && biome format --write tests/reference-data/horizons.json"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
